@@ -2,27 +2,27 @@ import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { deleteDeck, listDecks } from "../../utils/api/index";
 
+
+
 function ListDecks() {
 // const history = useHistory();
     const [decks, setDecks] = useState([]);
     //const { deckId } = useParams();
-
+    
     //gets the list of decks
     useEffect(() => {
-        async function getDecks() {
-            const dataFromAPI = await listDecks();
-            setDecks(dataFromAPI);
-        }
-        getDecks();
+           
+        listDecks()
+          .then((data) => setDecks(data));
+        console.log(decks)
     }, []);
-    const handleDelete = async ({ target }) => {
+    const handleDelete = async ( id ) => {
         const confirm = window.confirm("Delete this deck? You will not be able to recover it.")
       
         if(confirm) {
-            const id = target.parentNode.value;
             await deleteDeck(id);
-            window.location.reload();
-          
+            listDecks()
+              .then((data) => setDecks(data));         
         }
     };
 
@@ -57,7 +57,7 @@ function ListDecks() {
                     </Link>
                   </div>
                   <div className="col-2">
-                    <button value={deck.id} className="btn btn-danger" onClick={handleDelete}>
+                    <button value={deck.id} className="btn btn-danger" onClick={() => handleDelete(deck.id)}>
                     Delete
                     </button>
                   </div>
